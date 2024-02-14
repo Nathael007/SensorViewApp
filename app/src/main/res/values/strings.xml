@@ -5,4 +5,5 @@
     <string name="data_visualization">Data Visualization</string>
     <string name="actuator">Actuator</string>
     <string name="prediction">Prediction</string>
+    <string name="room">Room</string>
 </resources>

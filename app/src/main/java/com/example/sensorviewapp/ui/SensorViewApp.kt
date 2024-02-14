@@ -1,6 +1,7 @@
 package com.example.sensorviewapp.ui
 
 import android.hardware.SensorPrivacyManager.Sensors
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,17 +22,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.sensorviewapp.R
 import com.example.sensorviewapp.ui.screens.ActuatorScreen
 import com.example.sensorviewapp.ui.screens.DataVisualizationScreen
 import com.example.sensorviewapp.ui.screens.HomeScreen
 import com.example.sensorviewapp.ui.screens.PredictionScreen
+import com.example.sensorviewapp.ui.screens.RoomScreen
+import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,12 +54,16 @@ fun SensorViewApp() {
     if(currentScreen == "Data Visualization") {
         currentScreen = stringResource(R.string.data_visualization)
     }
+    if(currentScreen == "Data Visualization" + "/{roomName}") {
+        currentScreen = stringResource(R.string.room)
+    }
     if(currentScreen == "Actuator") {
         currentScreen = stringResource(R.string.actuator)
     }
     if(currentScreen == "Prediction") {
         currentScreen = stringResource(R.string.prediction)
     }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -68,7 +80,10 @@ fun SensorViewApp() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Navigation(navController = navController, destination = "Home")
+            Navigation(
+                navController = navController,
+                destination = "Home"
+            )
         }
     }
 }
@@ -118,16 +133,44 @@ fun Navigation(
         startDestination = destination
     ) {
         composable("Home") {
-            HomeScreen(navController = navController,)
+            HomeScreen(
+                navController = navController
+                )
         }
         composable("Data Visualization") {
-            DataVisualizationScreen(navController = navController,)
-        }
-        composable("Actuator") {
-            ActuatorScreen(navController = navController,)
+            val roomsViewModel: RoomsViewModel = viewModel(factory = RoomsViewModel.Factory)
+            DataVisualizationScreen(
+                modifier = Modifier,
+                navController = navController,
+                retryAction = {},
+                dataVisualizationUiState = roomsViewModel.dataVisualizationUiState
+            )
         }
         composable("Prediction") {
-            PredictionScreen(navController = navController,)
+            PredictionScreen(
+                navController = navController
+            )
+        }
+        composable(
+            route = "Data Visualization" + "/{roomName}",
+            arguments = listOf(navArgument("roomName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("roomName")?.let {roomName ->
+                RoomScreen(
+                    navController = navController,
+                    roomName = roomName
+                )
+            }
+        }
+        composable("Actuator") {
+            ActuatorScreen(
+                navController = navController
+            )
+        }
+        composable("Prediction") {
+            PredictionScreen(
+                navController = navController
+            )
         }
     }
 }
