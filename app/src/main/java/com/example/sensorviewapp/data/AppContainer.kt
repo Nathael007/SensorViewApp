@@ -1,4 +1,4 @@
-package com.example.sensorviewapp.data
+    package com.example.sensorviewapp.data
 
 import okhttp3.MediaType.Companion.toMediaType
 import com.example.sensorviewapp.network.SensorApiService
@@ -11,7 +11,7 @@ interface AppContainer {
 }
 
 class DefaultAppContainer : AppContainer {
-    private val baseUrl = "http://192.168.211.93:5000/"
+    private val baseUrl = "http://192.168.211.205:5000/"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
