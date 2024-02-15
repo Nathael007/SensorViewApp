@@ -33,13 +33,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.sensorviewapp.R
+import com.example.sensorviewapp.model.GetRoomSensors
 import com.example.sensorviewapp.ui.screens.ActuatorScreen
 import com.example.sensorviewapp.ui.screens.DataVisualizationScreen
 import com.example.sensorviewapp.ui.screens.HomeScreen
 import com.example.sensorviewapp.ui.screens.PredictionScreen
 import com.example.sensorviewapp.ui.screens.RoomScreen
 import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomsViewModel
+import com.example.sensorviewapp.ui.screens.viewmodel.roomScreenViewModelHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,9 +159,14 @@ fun Navigation(
             arguments = listOf(navArgument("roomName") { type = NavType.StringType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("roomName")?.let {roomName ->
+                roomScreenViewModelHelper.currentRoom = GetRoomSensors(room = roomName)
+                val roomScreenViewModel: RoomScreenViewModel = viewModel(factory = RoomScreenViewModel.Factory)
                 RoomScreen(
                     navController = navController,
-                    roomName = roomName
+                    roomName = roomName,
+                    retryAction = {},
+                    roomScreenViewModel = roomScreenViewModel,
+                    roomScreenUiState = roomScreenViewModel.roomScreenUiState
                 )
             }
         }
