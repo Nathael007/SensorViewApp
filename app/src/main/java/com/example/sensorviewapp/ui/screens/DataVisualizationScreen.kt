@@ -71,6 +71,7 @@ fun DataVisualizationScreen(
             modifier.fillMaxSize(),
         )
         is DataVisualizationUiState.Error -> ErrorScreen( retryAction, modifier.fillMaxSize())
+        else -> {}
     }
 }
 
