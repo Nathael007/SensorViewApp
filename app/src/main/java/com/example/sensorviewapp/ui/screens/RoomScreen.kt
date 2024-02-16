@@ -46,6 +46,7 @@ import com.example.sensorviewapp.model.Sensor
 import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomUiState
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -62,8 +63,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
 import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -101,9 +105,11 @@ fun Dashboard(
     ){
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(sensors[0]) }
-    var lastValue by remember {mutableStateOf<Measure?>(null)}
-
+    var selectedText by remember { mutableStateOf(roomUiState.sensorList?.get(0)) }
+    var startDate by remember { mutableStateOf("Open start date picker dialog") }
+    var endDate by remember { mutableStateOf("Open end date picker dialog") }
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
     fun getRandomEntries() = List(4) { entryOf(it, Random.nextFloat() * 16f) }
 
     //val chartEntryModel = entryModelOf(4f, 12f, 8f, 16f)
@@ -131,13 +137,15 @@ fun Dashboard(
                     expanded = !expanded
                 }
             ) {
-                TextField(
-                    value = selectedText.name,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier.menuAnchor()
-                )
+                selectedText?.let {
+                    TextField(
+                        value = it.name,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor()
+                    )
+                }
 
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -163,35 +171,52 @@ fun Dashboard(
                     }
                 }
             }
-        }
-        Row {
-            Box(contentAlignment = Alignment.Center) {
-                Button(onClick = { showStartDatePicker = true }) {
-                    Text(text = startDate)
+
+            roomUiState.lastValue?.value.toString().let { Text(it) }
+
+            Row {
+                    Box(contentAlignment = Alignment.Center) {
+                        Button(onClick = { showStartDatePicker = true }) {
+                            Text(text = startDate)
+                        }
+                    }
+
+                    Box(contentAlignment = Alignment.Center) {
+                        Button(onClick = { showEndDatePicker = true }) {
+                            Text(text = endDate)
+                        }
+                    }
+
+                if (showStartDatePicker) {
+                    MyDatePickerDialog(
+                        onDateSelected = { startDate = it },
+                        onDismiss = { showStartDatePicker = false }
+                    )
+                }
+
+                if (showEndDatePicker) {
+                    MyDatePickerDialog(
+                        onDateSelected = { endDate = it },
+                        onDismiss = { showEndDatePicker = false }
+                    )
                 }
             }
-            Box(contentAlignment = Alignment.Center) {
-                Button(onClick = { showEndDatePicker = true }) {
-                    Text(text = endDate)
-                }
-            }
-            if (showStartDatePicker) {
-                MyDatePickerDialog(
-                    onDateSelected = { startDate = it },
-                    onDismiss = { showStartDatePicker = false }
-                )
-            }
-            if (showEndDatePicker) {
-                MyDatePickerDialog(
-                    onDateSelected = { endDate = it },
-                    onDismiss = { showEndDatePicker = false }
-                )
-            }
 
+            Chart(
+                chart = lineChart(),
+                model = chartEntryModel,
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(),
+            )
+
+            Chart(
+                chart = columnChart(),
+                chartModelProducer = chartEntryModelProducer,
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(),
+            )
         }
 
-
-        roomUiState.lastValue?.value.toString().let { Text(it) }
     }
 }
 
