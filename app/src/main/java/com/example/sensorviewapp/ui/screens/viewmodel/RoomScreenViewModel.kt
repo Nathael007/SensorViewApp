@@ -20,16 +20,18 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface RoomScreenUiState {
 
-    data class Success(val sensors: List<Sensor>) : RoomScreenUiState
+    data object Success : RoomScreenUiState
     data object Error : RoomScreenUiState
     data object Loading : RoomScreenUiState
-
 }
 
 class RoomScreenViewModelHelper {
@@ -44,6 +46,9 @@ class RoomScreenViewModel(
         private set
 
     var room: GetRoomSensors = roomScreenViewModelHelper.currentRoom
+
+    private val _uiState = MutableStateFlow(RoomUiState())
+    val uiState: StateFlow<RoomUiState> = _uiState.asStateFlow()
 
     init {
         getRoomSensors()
@@ -69,7 +74,9 @@ class RoomScreenViewModel(
             roomScreenUiState = try {
                 Log.v("TEST API", room.room)
                 val result: List<Sensor> = roomsRepository.getRoomSensors(room)
-                RoomScreenUiState.Success(result)
+                _uiState.value.sensorList = result
+                _uiState.value.lastValue = roomsRepository.getLastValue(GetLastValue(result[0].name, result[0].uom))
+                RoomScreenUiState.Success
             } catch (e: IOException) {
                 RoomScreenUiState.Error
             } catch (e: HttpException) {
