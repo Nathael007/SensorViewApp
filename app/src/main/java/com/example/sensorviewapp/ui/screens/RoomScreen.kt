@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,13 +16,20 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,11 +76,12 @@ fun RoomScreen(
     roomScreenUiState: RoomScreenUiState,
     modifier: Modifier = Modifier
 ) {
+    val roomUiState by roomScreenViewModel.uiState.collectAsState()
     when (roomScreenUiState) {
         is RoomScreenUiState.Loading -> LoadingScreen(modifier.fillMaxSize())
         is RoomScreenUiState.Success -> Dashboard(
+            roomUiState,
             roomScreenViewModel,
-            roomScreenUiState.sensors,
             navController = navController,
             modifier.fillMaxSize(),
         )
@@ -85,8 +94,8 @@ fun RoomScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Dashboard(
+    roomUiState: RoomUiState,
     roomScreenViewModel: RoomScreenViewModel,
-    sensors: List<Sensor>,
     navController: NavController,
     modifier: Modifier
     ){
@@ -134,7 +143,7 @@ fun Dashboard(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    sensors.forEach { item ->
+                    roomUiState.sensorList?.forEach { item ->
                         DropdownMenuItem(
                             text = { Text(text = item.uom) },
                             onClick = {
@@ -142,35 +151,90 @@ fun Dashboard(
                                 expanded = false
                                 Toast.makeText(context, item.name, Toast.LENGTH_SHORT).show()
                                 CoroutineScope(Dispatchers.Default).launch {
-                                    lastValue = roomScreenViewModel.getLastValue(GetLastValue(selectedText.name, selectedText.uom))
-                                    Log.v("log value", lastValue.toString())
+                                    roomUiState.lastValue = roomScreenViewModel.getLastValue(
+                                        GetLastValue(
+                                            selectedText!!.name, selectedText!!.uom
+                                        )
+                                    )
+                                    Log.v("log value", roomUiState.lastValue.toString())
                                 }
                             }
                         )
                     }
                 }
             }
-
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Chart(
-                    chart = lineChart(),
-                    model = chartEntryModel,
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
-                )
-
-                Chart(
-                    chart = columnChart(),
-                    chartModelProducer = chartEntryModelProducer,
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
+        }
+        Row {
+            Box(contentAlignment = Alignment.Center) {
+                Button(onClick = { showStartDatePicker = true }) {
+                    Text(text = startDate)
+                }
+            }
+            Box(contentAlignment = Alignment.Center) {
+                Button(onClick = { showEndDatePicker = true }) {
+                    Text(text = endDate)
+                }
+            }
+            if (showStartDatePicker) {
+                MyDatePickerDialog(
+                    onDateSelected = { startDate = it },
+                    onDismiss = { showStartDatePicker = false }
                 )
             }
+            if (showEndDatePicker) {
+                MyDatePickerDialog(
+                    onDateSelected = { endDate = it },
+                    onDismiss = { showEndDatePicker = false }
+                )
+            }
+
         }
+
+
+        roomUiState.lastValue?.value.toString().let { Text(it) }
     }
-    Text(lastValue?.value.toString())
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyDatePickerDialog(
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(System.currentTimeMillis())
+
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        convertMillisToDate(it)
+    } ?: ""
+
+    DatePickerDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Button(onClick = {
+                onDateSelected(selectedDate)
+                onDismiss()
+            }
+
+            ) {
+                Text(text = "OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text(text = "Cancel")
+            }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState
+        )
+    }
+}
+
+private fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("dd/MM/yyyy")
+    return formatter.format(Date(millis))
 }
