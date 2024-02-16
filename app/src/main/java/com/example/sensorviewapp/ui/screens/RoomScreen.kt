@@ -89,8 +89,10 @@ fun Dashboard(
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(roomUiState.sensorList?.get(0)) }
-    var date by remember { mutableStateOf("Open date picker dialog") }
-    var showDatePicker by remember { mutableStateOf(false) }
+    var startDate by remember { mutableStateOf("Open start date picker dialog") }
+    var endDate by remember { mutableStateOf("Open end date picker dialog") }
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
     Column {
         Box(
             modifier = Modifier
@@ -138,17 +140,33 @@ fun Dashboard(
                 }
             }
         }
-        Box(contentAlignment = Alignment.Center) {
-            Button(onClick = { showDatePicker = true }) {
-                Text(text = date)
+        Row {
+            Box(contentAlignment = Alignment.Center) {
+                Button(onClick = { showStartDatePicker = true }) {
+                    Text(text = startDate)
+                }
             }
+            Box(contentAlignment = Alignment.Center) {
+                Button(onClick = { showEndDatePicker = true }) {
+                    Text(text = endDate)
+                }
+            }
+            if (showStartDatePicker) {
+                MyDatePickerDialog(
+                    onDateSelected = { startDate = it },
+                    onDismiss = { showStartDatePicker = false }
+                )
+            }
+            if (showEndDatePicker) {
+                MyDatePickerDialog(
+                    onDateSelected = { endDate = it },
+                    onDismiss = { showEndDatePicker = false }
+                )
+            }
+
         }
-        if (showDatePicker) {
-            MyDatePickerDialog(
-                onDateSelected = { date = it },
-                onDismiss = { showDatePicker = false }
-            )
-        }
+
+
         roomUiState.lastValue?.value.toString().let { Text(it) }
     }
 }
