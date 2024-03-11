@@ -106,8 +106,8 @@ fun Dashboard(
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(roomUiState.sensorList?.get(0)) }
-    var startDate by remember { mutableStateOf("Open start date picker dialog") }
-    var endDate by remember { mutableStateOf("Open end date picker dialog") }
+    var startDate by remember { mutableStateOf("start date ") }
+    var endDate by remember { mutableStateOf("end date") }
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
     fun getRandomEntries() = List(4) { entryOf(it, Random.nextFloat() * 16f) }
