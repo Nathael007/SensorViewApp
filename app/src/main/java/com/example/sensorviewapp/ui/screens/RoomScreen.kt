@@ -1,8 +1,9 @@
 package com.example.sensorviewapp.ui.screens
 
+import RoomScreenUiState
+import RoomScreenViewModel
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
-import android.os.Build
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -13,21 +14,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -44,13 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sensorviewapp.model.GetLastValue
-import com.example.sensorviewapp.model.Measure
-import com.example.sensorviewapp.model.Room
-import com.example.sensorviewapp.model.Sensor
-import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
-import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenUiState
-import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
-import com.example.sensorviewapp.ui.screens.viewmodel.RoomUiState
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -63,10 +50,7 @@ import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.core.entry.entryOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import okio.IOException
-import retrofit2.HttpException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -75,6 +59,10 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.random.Random
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomUiState
+import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenUiState
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

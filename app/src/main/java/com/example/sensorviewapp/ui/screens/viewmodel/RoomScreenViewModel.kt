@@ -1,4 +1,3 @@
-package com.example.sensorviewapp.ui.screens.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -16,10 +15,8 @@ import com.example.sensorviewapp.model.GetRoomSensors
 import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Sensor
-import kotlinx.coroutines.CoroutineScope
+import com.example.sensorviewapp.ui.screens.viewmodel.RoomUiState
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -87,7 +87,6 @@ fun DataVisualizationScreen(
             modifier.fillMaxSize(),
         )
         is DataVisualizationUiState.Error -> ErrorScreen( retryAction, modifier.fillMaxSize())
-        else -> {}
     }
 }
 
@@ -180,16 +179,16 @@ fun RoomCard(
             // Smiley Bonne Temperature
             Text(
                 text =
-                    if (indicator != null) {
-                        when (indicator.comfort) {
-                            "good" -> ComfortIndicator.GOOD.emoji
-                            "normal" -> ComfortIndicator.NORMAL.emoji
-                            "bad" -> ComfortIndicator.BAD.emoji
-                            else -> ""
-                        }
-                    } else {
-                           "Indicator not available"
-                   },
+                if (indicator != null) {
+                    when (indicator.comfort) {
+                        "good" -> ComfortIndicator.GOOD.emoji
+                        "normal" -> ComfortIndicator.NORMAL.emoji
+                        "bad" -> ComfortIndicator.BAD.emoji
+                        else -> ""
+                    }
+                } else {
+                    "Indicator not available"
+                },
                 fontSize = 48.sp,
             )
         }
