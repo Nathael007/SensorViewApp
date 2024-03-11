@@ -54,7 +54,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.example.sensorviewapp.model.Comfort
 
+enum class ComfortIndicator(val emoji: String) {
+    GOOD("\uD83D\uDE00"),
+    NORMAL("\uD83D\uDE42"),
+    BAD("\uD83D\uDE16");
+
+    fun switchComfort(comfort: String) {
+        when (comfort) {
+            "good" -> GOOD.emoji
+            "normal" -> NORMAL.emoji
+            "bad" -> BAD.emoji
+        }
+    }
+}
 
 @Composable
 fun DataVisualizationScreen(
@@ -67,6 +82,7 @@ fun DataVisualizationScreen(
         is DataVisualizationUiState.Loading -> LoadingScreen(modifier.fillMaxSize())
         is DataVisualizationUiState.Success -> RoomsScreen(
             dataVisualizationUiState.rooms,
+            dataVisualizationUiState.comforts,
             navController = navController,
             modifier.fillMaxSize(),
         )
@@ -111,17 +127,27 @@ fun ErrorScreen(
 @Composable
 fun RoomsScreen(
     rooms: List<Room>,
+    comforts: List<Comfort>,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(250.dp),
-        modifier = modifier.fillMaxWidth(),
+        columns = GridCells.Adaptive(200.dp),
+        modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
         contentPadding = PaddingValues(4.dp)
     ) {
 
         items(items = rooms, key = { room -> room.name }) { room ->
-            RoomCard(navController = navController, room = room)
+            var indicator: Comfort? = null
+            comforts.forEach { comfort ->
+                if (comfort.roomName == room.name) {
+                    indicator = comfort
+                }
+            }
+
+            RoomCard(navController = navController, room = room, indicator = indicator)
         }
     }
 }
@@ -131,14 +157,41 @@ fun RoomsScreen(
 fun RoomCard(
     modifier: Modifier = Modifier,
     navController: NavController,
-    room: Room
+    room: Room,
+    indicator: Comfort?
 ) {
     Card(
         modifier = Modifier
-            .size(width = 180.dp, height = 200.dp)
-            .padding(8.dp),
+            .size(width = 200.dp, height = 140.dp)
+            .padding(8.dp)
+            .padding(horizontal = 32.dp),
         onClick = { navController.navigate("Data Visualization/" + room.name) },
     ) {
-        Text(room.name)
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = room.name,
+                fontSize = 32.sp
+            )
+            // Smiley Bonne Temperature
+            Text(
+                text =
+                    if (indicator != null) {
+                        when (indicator.comfort) {
+                            "good" -> ComfortIndicator.GOOD.emoji
+                            "normal" -> ComfortIndicator.NORMAL.emoji
+                            "bad" -> ComfortIndicator.BAD.emoji
+                            else -> ""
+                        }
+                    } else {
+                           "Indicator not available"
+                   },
+                fontSize = 48.sp,
+            )
+        }
     }
 }

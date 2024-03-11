@@ -15,3 +15,9 @@ data class GetLastValue(
     val uom: String
 )
 
+@Serializable
+data class GetSensorValues(
+    val sensor: String,
+    val start: String,
+    val end: String
+)

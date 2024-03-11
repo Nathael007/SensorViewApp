@@ -13,6 +13,7 @@ import com.example.sensorviewapp.RoomsApplication
 import com.example.sensorviewapp.data.RoomsRepository
 import com.example.sensorviewapp.model.GetLastValue
 import com.example.sensorviewapp.model.GetRoomSensors
+import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Sensor
 import kotlinx.coroutines.CoroutineScope
@@ -67,12 +68,28 @@ class RoomScreenViewModel(
         return@coroutineScope result
     }
 
+    suspend fun getMeasures(): List<Measure>? = coroutineScope {
+        var result: List<Measure>? = null
+        try{
+            result = roomsRepository.getSensorValues(
+                GetSensorValues(
+                    _uiState.value.selectedSensor?.name ?: "",
+                    _uiState.value.startDate,
+                    _uiState.value.endDate)
+            )
+        } catch(e: IOException){
+            Log.e("getMeasure IO ERROR", e.toString())
+        } catch(e: HttpException){
+            Log.e("getMeasure HTTP ERROR", e.toString())
+        }
+        return@coroutineScope result
+    }
+
     private fun getRoomSensors() {
         viewModelScope.launch {
             roomScreenUiState =
                 RoomScreenUiState.Loading
             roomScreenUiState = try {
-                Log.v("TEST API", room.room)
                 val result: List<Sensor> = roomsRepository.getRoomSensors(room)
                 _uiState.value.sensorList = result
                 _uiState.value.lastValue = roomsRepository.getLastValue(GetLastValue(result[0].name, result[0].uom))
