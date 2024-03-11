@@ -1,7 +1,9 @@
 package com.example.sensorviewapp.data
 
+import com.example.sensorviewapp.model.Comfort
 import com.example.sensorviewapp.model.GetLastValue
 import com.example.sensorviewapp.model.GetRoomSensors
+import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Room
 import com.example.sensorviewapp.model.Sensor
@@ -12,6 +14,8 @@ interface RoomsRepository {
     suspend fun getRooms(): List<Room>
     suspend fun getRoomSensors(body: GetRoomSensors): List<Sensor>
     suspend fun getLastValue(body: GetLastValue): Measure
+    suspend fun getSensorValues(body: GetSensorValues): List<Measure>
+    suspend fun getComfortIndicators(): List<Comfort>
 }
 
 class NetworkRoomsRepository(
@@ -20,4 +24,6 @@ class NetworkRoomsRepository(
     override suspend fun getRooms(): List<Room> = sensorApiService.getRooms()
     override suspend fun getRoomSensors(body: GetRoomSensors): List<Sensor> = sensorApiService.getRoomSensors(body)
     override suspend fun getLastValue(body: GetLastValue): Measure = sensorApiService.getLastValue(body)
+    override suspend fun getSensorValues(body: GetSensorValues): List<Measure> = sensorApiService.getSensorValues(body)
+    override suspend fun getComfortIndicators(): List<Comfort> = sensorApiService.getComfortIndicators()
 }

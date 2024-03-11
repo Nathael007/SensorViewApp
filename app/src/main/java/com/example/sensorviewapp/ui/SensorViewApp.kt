@@ -1,7 +1,9 @@
 package com.example.sensorviewapp.ui
 
 import android.hardware.SensorPrivacyManager.Sensors
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -44,6 +46,7 @@ import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomsViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.roomScreenViewModelHelper
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SensorViewApp() {
@@ -126,6 +129,7 @@ fun SensorTopAppBar(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     navController: NavHostController,
@@ -138,7 +142,7 @@ fun Navigation(
         composable("Home") {
             HomeScreen(
                 navController = navController
-                )
+            )
         }
         composable("Data Visualization") {
             val roomsViewModel: RoomsViewModel = viewModel(factory = RoomsViewModel.Factory)
@@ -165,8 +169,7 @@ fun Navigation(
                     navController = navController,
                     roomName = roomName,
                     retryAction = {},
-                    roomScreenViewModel = roomScreenViewModel,
-                    roomScreenUiState = roomScreenViewModel.roomScreenUiState
+                    roomScreenViewModel = roomScreenViewModel
                 )
             }
         }

@@ -1,7 +1,9 @@
 package com.example.sensorviewapp.network;
 
+import com.example.sensorviewapp.model.Comfort
 import com.example.sensorviewapp.model.GetLastValue
 import com.example.sensorviewapp.model.GetRoomSensors
+import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Room
 import com.example.sensorviewapp.model.Sensor
@@ -20,4 +22,10 @@ interface SensorApiService {
 
     @POST("getLastValue")
     suspend fun getLastValue(@Body body: GetLastValue): Measure
+
+    @POST("getSensorValues")
+    suspend fun getSensorValues(@Body body: GetSensorValues): List<Measure>
+
+    @POST("getComfortIndicators")
+    suspend fun getComfortIndicators(): List<Comfort>
 }
