@@ -16,11 +16,12 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.sensorviewapp.RoomsApplication
 import com.example.sensorviewapp.data.RoomsRepository
+import com.example.sensorviewapp.model.Comfort
 import com.example.sensorviewapp.model.Room
 import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed interface DataVisualizationUiState {
-    data class Success(val rooms: List<Room>) : DataVisualizationUiState
+    data class Success(val rooms: List<Room>, val comforts: List<Comfort>) : DataVisualizationUiState
     data object Error : DataVisualizationUiState
     data object Loading : DataVisualizationUiState
 }
@@ -40,8 +41,9 @@ class RoomsViewModel(
             dataVisualizationUiState =
                 DataVisualizationUiState.Loading
             dataVisualizationUiState = try {
-                val result: List<Room> = roomsRepository.getRooms()
-                DataVisualizationUiState.Success(result)
+                val roms: List<Room> = roomsRepository.getRooms()
+                val comforts: List<Comfort> = roomsRepository.getComfortIndicators()
+                DataVisualizationUiState.Success(roms, comforts)
             }
             catch (e: IOException) {
                 DataVisualizationUiState.Error
