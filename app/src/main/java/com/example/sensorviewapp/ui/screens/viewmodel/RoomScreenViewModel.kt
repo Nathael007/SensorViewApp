@@ -93,6 +93,12 @@ class RoomScreenViewModel(
                 val result: List<Sensor> = roomsRepository.getRoomSensors(room)
                 _uiState.value.sensorList = result
                 _uiState.value.lastValue = roomsRepository.getLastValue(GetLastValue(result[0].name, result[0].uom))
+                _uiState.value.listMeasures = roomsRepository.getSensorValues(GetSensorValues(result[0].name, _uiState.value.startDate, _uiState.value.endDate))
+                val measureValue: MutableList<Double> = mutableListOf()
+                _uiState.value.listMeasures?.forEach {
+                    measureValue.add(it.value)
+                }
+                _uiState.value.graphData = measureValue.map { it as Number }
                 RoomScreenUiState.Success
             } catch (e: IOException) {
                 RoomScreenUiState.Error

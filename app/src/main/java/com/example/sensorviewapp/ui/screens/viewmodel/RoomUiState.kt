@@ -19,8 +19,8 @@ data class RoomUiState (
     var listMeasures: List<Measure>? = null,
     var sensorList: List<Sensor>? = null,
     var startDate: String = getYesterdayFormatted(),
-    var endDate: String = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(Date())
-
+    var endDate: String = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(Date()),
+    var graphData: Collection<Number>? = null
 )
 
 fun getYesterdayFormatted(): String {

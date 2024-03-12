@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -57,10 +58,20 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.random.Random
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.lineSeries
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -111,6 +122,9 @@ fun Dashboard(
         return@DisposableEffect onDispose {
         }
     }
+    val measureValue: MutableList<Double> = mutableListOf()
+
+    //var selectedOption by remember { mutableStateOf<Option>(Option.DEFAULT) }
 
     Column {
         Box(
@@ -153,6 +167,11 @@ fun Dashboard(
                                         )
                                     )
                                     listMeasures = roomScreenViewModel.getMeasures()
+                                    listMeasures?.forEach {
+                                        //Text(it.value.toString())
+                                        measureValue.add(it.value)
+                                    }
+                                    roomUiState.graphData = measureValue.map { it as Number }
                                 }
                             }
                         )
@@ -198,10 +217,24 @@ fun Dashboard(
                 )
             }
         }
-        Text(lastValue?.value.toString())
-        listMeasures?.forEach {
-            Text(it.value.toString())
+
+        val modelProducer = remember { CartesianChartModelProducer.build() }
+        LaunchedEffect(Unit) {
+            modelProducer.tryRunTransaction {
+                lineSeries {
+                    Log.v("mydata : ", roomUiState.graphData.toString())
+                    roomUiState.graphData?.let { series(it) }
+                }
+            }
         }
+        CartesianChartHost(
+            rememberCartesianChart(
+                rememberLineCartesianLayer(),
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(),
+            ),
+            modelProducer,
+        )
     }
 }
 
