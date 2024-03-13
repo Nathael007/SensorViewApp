@@ -28,4 +28,7 @@ interface SensorApiService {
 
     @POST("getComfortIndicators")
     suspend fun getComfortIndicators(): List<Comfort>
+
+    @POST("getComfortIndicator")
+    suspend fun getComfortIndicator(@Body body: GetRoomSensors): Comfort
 }

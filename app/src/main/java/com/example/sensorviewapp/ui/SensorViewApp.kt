@@ -1,10 +1,7 @@
 package com.example.sensorviewapp.ui
 
-import android.hardware.SensorPrivacyManager.Sensors
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -41,7 +37,6 @@ import com.example.sensorviewapp.ui.screens.DataVisualizationScreen
 import com.example.sensorviewapp.ui.screens.HomeScreen
 import com.example.sensorviewapp.ui.screens.PredictionScreen
 import com.example.sensorviewapp.ui.screens.RoomScreen
-import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomsViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.roomScreenViewModelHelper

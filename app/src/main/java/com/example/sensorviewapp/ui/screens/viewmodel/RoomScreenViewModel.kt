@@ -16,10 +16,7 @@ import com.example.sensorviewapp.model.GetRoomSensors
 import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Sensor
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,7 +52,6 @@ class RoomScreenViewModel(
         getRoomSensors()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     suspend fun getLastValue(body: GetLastValue): Measure? = coroutineScope{
         var result: Measure? = null
         try {
@@ -93,6 +89,7 @@ class RoomScreenViewModel(
                 val result: List<Sensor> = roomsRepository.getRoomSensors(room)
                 _uiState.value.sensorList = result
                 _uiState.value.lastValue = roomsRepository.getLastValue(GetLastValue(result[0].name, result[0].uom))
+                _uiState.value.comfortIndicator = roomsRepository.getComfortIndicator(room)
                 RoomScreenUiState.Success
             } catch (e: IOException) {
                 RoomScreenUiState.Error

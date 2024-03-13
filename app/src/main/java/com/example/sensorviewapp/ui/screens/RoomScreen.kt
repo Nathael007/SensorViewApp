@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.sensorviewapp.model.GetLastValue
 import com.example.sensorviewapp.model.Measure
@@ -61,6 +62,16 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+
+enum class Status(val description: String){
+    HOT("\uD83E\uDD75"),
+    COLD("\uD83E\uDD76"),
+    HIGHPPM("\uD83D\uDE37"),
+    LOUD("\uD83D\uDDE3\uFE0F"),
+    DARK("\uD83C\uDF03"),
+    HUMHIGH("\uD83D\uDCA6"),
+    HUMLOW("☀\uFE0F")
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -100,6 +111,7 @@ fun Dashboard(
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
     var lastValue by remember { mutableStateOf(roomUiState.lastValue) }
+    val indicators: List<String>? = roomUiState.comfortIndicator?.indicators?.split(",")
     DisposableEffect(roomUiState.lastValue) {
         lastValue = roomUiState.lastValue
         return@DisposableEffect onDispose {
@@ -113,6 +125,24 @@ fun Dashboard(
     }
 
     Column {
+        Row {
+            indicators?.forEach {
+                Text(
+                    text =
+                        when (it) {
+                            "hot" -> Status.HOT.description
+                            "cold" -> Status.COLD.description
+                            "high-ppm" -> Status.HIGHPPM.description
+                            "loud" -> Status.LOUD.description
+                            "dark" -> Status.DARK.description
+                            "hum-high" -> Status.HUMHIGH.description
+                            "hum-low" -> Status.HUMLOW.description
+                            else -> ""
+                        },
+                    fontSize = 48.sp,
+                )
+            }
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()

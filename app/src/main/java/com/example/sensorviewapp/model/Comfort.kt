@@ -11,5 +11,7 @@ data class Comfort (
     val lum: Double,
     val noise: Double?,
     val roomName: String,
-    val temp: Double
+    val temp: Double,
+    val presence: Boolean?,
+    val presenceProba: Double
 )
