@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -89,7 +90,7 @@ fun RoomScreen(
             roomUiState,
             roomScreenViewModel,
             navController = navController,
-            modifier.fillMaxSize(),
+            modifier.fillMaxSize()
         )
         is RoomScreenUiState.Error -> ErrorScreen(retryAction, modifier.fillMaxSize())
     }
@@ -123,8 +124,15 @@ fun Dashboard(
         }
     }
     val measureValue: MutableList<Double> = mutableListOf()
-
-    //var selectedOption by remember { mutableStateOf<Option>(Option.DEFAULT) }
+    var dataList: Collection<Number>? = mutableListOf()
+    DisposableEffect(roomUiState.graphData) {
+        dataList = roomUiState.graphData
+        Log.v("disposableEffect : ", dataList.toString())
+        return@DisposableEffect onDispose {
+        }
+    }
+    var finalDataList: Collection<Number>? = mutableListOf()
+    var finalRoomUiState: Collection<Number>?
 
     Column {
         Box(
@@ -172,10 +180,15 @@ fun Dashboard(
                                         measureValue.add(it.value)
                                     }
                                     roomUiState.graphData = measureValue.map { it as Number }
+
+                                    Log.v("nexlist : ", roomUiState.graphData.toString())
                                 }
                             }
                         )
                     }
+                    ActivateGraph(dataList, roomUiState)
+                    //finalDataList = dataList
+                    //finalRoomUiState = roomUiState
                 }
             }
         }
@@ -218,12 +231,17 @@ fun Dashboard(
             }
         }
 
-        val modelProducer = remember { CartesianChartModelProducer.build() }
+        @Composable
+        fun GetTheGraph(finalDataList: Collection<Number>?, finalRoomUiState: RoomUiState){
+            CallTheGraph(finalDataList, finalRoomUiState)
+        }
+
+        /*val modelProducer = remember { CartesianChartModelProducer.build() }
         LaunchedEffect(Unit) {
             modelProducer.tryRunTransaction {
                 lineSeries {
-                    Log.v("mydata : ", roomUiState.graphData.toString())
-                    roomUiState.graphData?.let { series(it) }
+                    Log.v("baguette: ", measureValue.toString())
+                    series(measureValue)
                 }
             }
         }
@@ -234,11 +252,55 @@ fun Dashboard(
                 bottomAxis = rememberBottomAxis(),
             ),
             modelProducer,
-        )
+        )*/
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun ActivateGraph(dataList: Collection<Number>?, roomUiState: RoomUiState) {
+    /*val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        modelProducer.tryRunTransaction {
+            lineSeries {
+                Log.v("baguette : ", roomUiState.graphData.toString())
+                dataList?.let { series(it) }
+            }
+        }
+    }
+    CartesianChartHost(
+        rememberCartesianChart(
+            rememberLineCartesianLayer(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
+        ),
+        modelProducer,
+    )*/
+    CallTheGraph(dataList, roomUiState)
+}
 
-
+@RequiresApi(Build.VERSION_CODES.O)
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun CallTheGraph(dataList: Collection<Number>?, roomUiState: RoomUiState){
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        modelProducer.tryRunTransaction {
+            lineSeries {
+                Log.v("baguette : ", roomUiState.graphData.toString())
+                dataList?.let { series(it) }
+            }
+        }
+    }
+    CartesianChartHost(
+        rememberCartesianChart(
+            rememberLineCartesianLayer(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
+        ),
+        modelProducer,
+    )
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
