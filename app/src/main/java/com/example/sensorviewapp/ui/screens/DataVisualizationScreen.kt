@@ -133,7 +133,7 @@ fun ErrorScreen(
             painter = painterResource(R.drawable.ic_connection_error),
             contentDescription = stringResource(R.string.error)
         )
-        Text("Error")
+        //Text("Error")
     }
 }
 
