@@ -1,5 +1,6 @@
 package com.example.sensorviewapp.ui.screens
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,7 +31,7 @@ fun HomeScreen(
         HomeScreenElement(stringResource(R.string.prediction), R.drawable.prediction),
     )
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(150.dp),
+        columns = GridCells.Adaptive(200.dp),
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(4.dp)
     ) {
@@ -51,17 +53,23 @@ fun ScreenCard(
             .padding(8.dp),
         onClick = { navController.navigate(item.text) },
     ) {
-        AsyncImage(
+        Column(
             modifier = Modifier
-                .size(width = 140.dp, height = 140.dp)
-                .padding(start = 6.dp, end = 6.dp),
-            model = item.image,
-            contentDescription = "null"
-        )
-        Text(
-            text = item.text,
-            modifier = Modifier
-                .padding(8.dp)
-        )
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(width = 140.dp, height = 140.dp)
+                    .padding(top = 10.dp),
+                model = item.image,
+                contentDescription = "null"
+            )
+            Text(
+                text = item.text,
+                modifier = Modifier
+                    .padding(10.dp)
+            )
+        }
     }
 }
