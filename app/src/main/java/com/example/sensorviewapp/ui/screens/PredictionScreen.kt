@@ -1,20 +1,38 @@
 package com.example.sensorviewapp.ui.screens
 
 import PredictionUiState
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.sensorviewapp.model.GetLastValue
 import com.example.sensorviewapp.ui.screens.viewmodel.PredictionScreenUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.PredictionScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomUiState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 enum class SensorsAvailable(val value: String, val friendlyName: String){
     TMPD251_1(value="d251_1_co2_air_temperature", friendlyName="D251 TEMP 1"),
@@ -52,6 +70,7 @@ fun PredictionScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main(
     predictionUiState: PredictionUiState,
@@ -59,10 +78,8 @@ fun Main(
     navController: NavController,
     modifier: Modifier
 ) {
-    Column {
-        predictionUiState.predictions?.forEach{
-            Text(it.value.toString())
-        }
+    predictionUiState.predictions?.forEach{
+        Text(it.value.toString())
     }
 }
 

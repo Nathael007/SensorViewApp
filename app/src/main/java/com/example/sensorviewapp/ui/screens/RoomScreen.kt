@@ -166,6 +166,8 @@ fun Dashboard(
             modifier = Modifier
                 .padding(bottom = 20.dp)
         ) {
+            Text("Presence:", fontWeight = FontWeight.Bold)
+            Text("%,.1f".format(roomUiState.comfortIndicator?.presenceProba?.times(100) ?: 0.0) + " %")
             Text("Comfort:", fontWeight = FontWeight.Bold)
             Row {
                 indicators?.forEach {
