@@ -21,3 +21,8 @@ data class GetSensorValues(
     val start: String,
     val end: String
 )
+
+@Serializable
+data class TrainIA(
+    val sensor: String
+)

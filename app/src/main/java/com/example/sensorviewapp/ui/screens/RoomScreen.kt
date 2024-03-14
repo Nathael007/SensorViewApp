@@ -6,6 +6,10 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -41,7 +47,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -72,17 +80,18 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.lineSeries
 
-enum class Status(val description: String){
-    HOT("\uD83E\uDD75"),
-    COLD("\uD83E\uDD76"),
-    HIGHPPM("\uD83D\uDE37"),
-    LOUD("\uD83D\uDDE3\uFE0F"),
-    DARK("\uD83C\uDF03"),
-    HUMHIGH("\uD83D\uDCA6"),
-    HUMLOW("☀\uFE0F")
+enum class Status(val emoji: String, val description: String){
+    HOT(emoji = "\uD83E\uDD75", description = "Too hot"),
+    COLD(emoji = "\uD83E\uDD76", description = "Too cold"),
+    HIGHPPM(emoji = "\uD83D\uDE37", description = "Unbreathable air"),
+    LOUD(emoji = "\uD83D\uDDE3\uFE0F", description = "Too noisy"),
+    DARK(emoji = "\uD83C\uDF03", description = "Too dark"),
+    HUMHIGH(emoji = "\uD83D\uDCA6", description = "Too humid"),
+    HUMLOW(emoji = "☀\uFE0F", description = "Too dry")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -92,7 +101,8 @@ fun RoomScreen(
     roomName: String,
     retryAction: () -> Unit,
     roomScreenViewModel: RoomScreenViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState
 ) {
     val roomUiState by roomScreenViewModel.uiState.collectAsState()
     when (roomScreenViewModel.roomScreenUiState) {
@@ -101,7 +111,8 @@ fun RoomScreen(
             roomUiState,
             roomScreenViewModel,
             navController = navController,
-            modifier.fillMaxSize()
+            modifier.fillMaxSize(),
+            scrollState
         )
         is RoomScreenUiState.Error -> ErrorScreen(retryAction, modifier.fillMaxSize())
     }
@@ -115,7 +126,8 @@ fun Dashboard(
     roomUiState: RoomUiState,
     roomScreenViewModel: RoomScreenViewModel,
     navController: NavController,
-    modifier: Modifier
+    modifier: Modifier,
+    scrollState: ScrollState
 ){
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -136,37 +148,48 @@ fun Dashboard(
         return@DisposableEffect onDispose {
         }
     }
-    LaunchedEffect(roomUiState.selectedSensor) {
+    LaunchedEffect(roomUiState.selectedSensor, roomUiState.startDate, roomUiState.endDate) {
         roomScreenViewModel.getMeasures()?.let { newMeasures ->
             roomUiState.listMeasures = newMeasures
             graphData = newMeasures.map { it.value }
         }
     }
 
-
-    Column {
-        Row {
-            indicators?.forEach {
-                Text(
-                    text =
-                    when (it) {
-                        "hot" -> Status.HOT.description
-                        "cold" -> Status.COLD.description
-                        "high-ppm" -> Status.HIGHPPM.description
-                        "loud" -> Status.LOUD.description
-                        "dark" -> Status.DARK.description
-                        "hum-high" -> Status.HUMHIGH.description
-                        "hum-low" -> Status.HUMLOW.description
-                        else -> ""
-                    },
-                    fontSize = 48.sp,
-                )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(15.dp)
+            .verticalScroll(scrollState)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+        ) {
+            Text("Comfort:", fontWeight = FontWeight.Bold)
+            Row {
+                indicators?.forEach {
+                    Text(
+                        text =
+                        when (it) {
+                            "hot" -> Status.HOT.emoji
+                            "cold" -> Status.COLD.emoji
+                            "high-ppm" -> Status.HIGHPPM.emoji
+                            "loud" -> Status.LOUD.emoji
+                            "dark" -> Status.DARK.emoji
+                            "hum-high" -> Status.HUMHIGH.emoji
+                            "hum-low" -> Status.HUMLOW.emoji
+                            else -> ""
+                        },
+                        fontSize = 32.sp,
+                    )
+                }
             }
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp)
+                .padding(bottom = 5.dp),
+            contentAlignment = Alignment.Center
         ) {
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -209,7 +232,12 @@ fun Dashboard(
                 }
             }
         }
-        Row {
+        Row(
+           modifier = Modifier
+               .fillMaxWidth()
+               .padding(bottom = 30.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
             Box(contentAlignment = Alignment.Center) {
                 Button(onClick = { showStartDatePicker = true }) {
                     getDisplayDateFormat(roomUiState.startDate)?.let { Text(text = it) }
@@ -247,18 +275,35 @@ fun Dashboard(
                 )
             }
         }
-        Column {
-            Text("before")
+        Column(
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+        ) {
             LineSeriesGraph(graphData)
-            Text("after")
         }
-
+        Column(
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+        ) {
+            Text("Last value measured:", fontWeight = FontWeight.Bold)
+            Text(lastValue?.value.toString() + " " + lastValue?.uom)
+        }
+        Column {
+            Text("Informations:", fontWeight = FontWeight.Bold)
+            Status.entries.forEach { status ->
+                Row {
+                    Text(
+                        text = status.emoji + " : " + status.description,
+                        fontSize = 16.sp,
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun LineSeriesGraph(graphData: Collection<Number>?) {
-    Log.v("GraphData", graphData.toString())
     val modelProducer = remember{ CartesianChartModelProducer.build() }
     LaunchedEffect(graphData) {
         modelProducer.tryRunTransaction {

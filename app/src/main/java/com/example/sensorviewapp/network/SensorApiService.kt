@@ -7,6 +7,7 @@ import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Room
 import com.example.sensorviewapp.model.Sensor
+import com.example.sensorviewapp.model.TrainIA
 import retrofit2.http.GET;
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -31,4 +32,10 @@ interface SensorApiService {
 
     @POST("getComfortIndicator")
     suspend fun getComfortIndicator(@Body body: GetRoomSensors): Comfort
+
+    @POST("trainModel")
+    suspend fun trainModel(@Body body: TrainIA): List<Measure>
+
+    @POST("predict")
+    suspend fun predict(@Body body: TrainIA): List<Measure>
 }

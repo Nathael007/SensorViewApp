@@ -42,8 +42,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -84,7 +87,7 @@ fun DataVisualizationScreen(
             dataVisualizationUiState.rooms,
             dataVisualizationUiState.comforts,
             navController = navController,
-            modifier.fillMaxSize(),
+            modifier.fillMaxSize()
         )
         is DataVisualizationUiState.Error -> ErrorScreen( retryAction, modifier.fillMaxSize())
     }

@@ -5,6 +5,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -42,6 +43,7 @@ import com.example.sensorviewapp.ui.screens.HomeScreen
 import com.example.sensorviewapp.ui.screens.PredictionScreen
 import com.example.sensorviewapp.ui.screens.RoomScreen
 import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
+import com.example.sensorviewapp.ui.screens.viewmodel.PredictionScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomsViewModel
 import com.example.sensorviewapp.ui.screens.viewmodel.roomScreenViewModelHelper
@@ -49,7 +51,9 @@ import com.example.sensorviewapp.ui.screens.viewmodel.roomScreenViewModelHelper
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SensorViewApp() {
+fun SensorViewApp(
+    scrollState: ScrollState
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -88,7 +92,8 @@ fun SensorViewApp() {
         ) {
             Navigation(
                 navController = navController,
-                destination = "Home"
+                destination = "Home",
+                scrollState = scrollState
             )
         }
     }
@@ -133,7 +138,8 @@ fun SensorTopAppBar(
 @Composable
 fun Navigation(
     navController: NavHostController,
-    destination: String
+    destination: String,
+    scrollState: ScrollState
 ) {
     NavHost(
         navController = navController,
@@ -153,11 +159,6 @@ fun Navigation(
                 dataVisualizationUiState = roomsViewModel.dataVisualizationUiState
             )
         }
-        composable("Prediction") {
-            PredictionScreen(
-                navController = navController
-            )
-        }
         composable(
             route = "Data Visualization" + "/{roomName}",
             arguments = listOf(navArgument("roomName") { type = NavType.StringType })
@@ -169,18 +170,23 @@ fun Navigation(
                     navController = navController,
                     roomName = roomName,
                     retryAction = {},
-                    roomScreenViewModel = roomScreenViewModel
+                    roomScreenViewModel = roomScreenViewModel,
+                    scrollState = scrollState
                 )
             }
         }
         composable("Actuator") {
             ActuatorScreen(
-                navController = navController
+                navController = navController,
+                scrollState = scrollState
             )
         }
         composable("Prediction") {
             PredictionScreen(
-                navController = navController
+                navController = navController,
+                retryAction = {},
+                predictionScreenViewModel = viewModel(factory = PredictionScreenViewModel.Factory),
+                modifier = Modifier
             )
         }
     }

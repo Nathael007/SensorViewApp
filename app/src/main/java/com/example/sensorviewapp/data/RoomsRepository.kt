@@ -7,6 +7,7 @@ import com.example.sensorviewapp.model.GetSensorValues
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Room
 import com.example.sensorviewapp.model.Sensor
+import com.example.sensorviewapp.model.TrainIA
 import com.example.sensorviewapp.network.SensorApiService
 import retrofit2.http.Body
 
@@ -17,6 +18,8 @@ interface RoomsRepository {
     suspend fun getSensorValues(body: GetSensorValues): List<Measure>
     suspend fun getComfortIndicators(): List<Comfort>
     suspend fun getComfortIndicator(body: GetRoomSensors): Comfort
+    suspend fun trainModel(body: TrainIA): List<Measure>
+    suspend fun predict(body: TrainIA): List<Measure>
 }
 
 class NetworkRoomsRepository(
@@ -28,5 +31,6 @@ class NetworkRoomsRepository(
     override suspend fun getSensorValues(body: GetSensorValues): List<Measure> = sensorApiService.getSensorValues(body)
     override suspend fun getComfortIndicators(): List<Comfort> = sensorApiService.getComfortIndicators()
     override suspend fun getComfortIndicator(body: GetRoomSensors): Comfort = sensorApiService.getComfortIndicator(body)
-
+    override suspend fun trainModel(body: TrainIA): List<Measure> = sensorApiService.trainModel(body)
+    override suspend fun predict(body: TrainIA): List<Measure> = sensorApiService.predict(body)
 }
