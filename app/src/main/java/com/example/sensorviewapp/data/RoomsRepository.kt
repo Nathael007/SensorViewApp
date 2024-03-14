@@ -16,6 +16,7 @@ interface RoomsRepository {
     suspend fun getLastValue(body: GetLastValue): Measure
     suspend fun getSensorValues(body: GetSensorValues): List<Measure>
     suspend fun getComfortIndicators(): List<Comfort>
+    suspend fun getComfortIndicator(body: GetRoomSensors): Comfort
 }
 
 class NetworkRoomsRepository(
@@ -26,4 +27,6 @@ class NetworkRoomsRepository(
     override suspend fun getLastValue(body: GetLastValue): Measure = sensorApiService.getLastValue(body)
     override suspend fun getSensorValues(body: GetSensorValues): List<Measure> = sensorApiService.getSensorValues(body)
     override suspend fun getComfortIndicators(): List<Comfort> = sensorApiService.getComfortIndicators()
+    override suspend fun getComfortIndicator(body: GetRoomSensors): Comfort = sensorApiService.getComfortIndicator(body)
+
 }
