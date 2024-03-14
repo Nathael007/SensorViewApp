@@ -116,13 +116,14 @@ fun Dashboard(
     roomScreenViewModel: RoomScreenViewModel,
     navController: NavController,
     modifier: Modifier
-    ){
+){
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(roomUiState.sensorList?.get(0)) }
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
     var lastValue by remember { mutableStateOf(roomUiState.lastValue) }
+    var graphData by remember { mutableStateOf(roomUiState.graphData) }
     val indicators: List<String>? = roomUiState.comfortIndicator?.indicators?.split(",")
     DisposableEffect(roomUiState.lastValue) {
         lastValue = roomUiState.lastValue
@@ -135,16 +136,13 @@ fun Dashboard(
         return@DisposableEffect onDispose {
         }
     }
-    val measureValue: MutableList<Double> = mutableListOf()
-    var dataList: Collection<Number>? = mutableListOf()
-    DisposableEffect(roomUiState.graphData) {
-        dataList = roomUiState.graphData
-        Log.v("disposableEffect : ", dataList.toString())
-        return@DisposableEffect onDispose {
+    LaunchedEffect(roomUiState.selectedSensor) {
+        roomScreenViewModel.getMeasures()?.let { newMeasures ->
+            roomUiState.listMeasures = newMeasures
+            graphData = newMeasures.map { it.value }
         }
     }
-    var finalDataList: Collection<Number>? = mutableListOf()
-    var finalRoomUiState: Collection<Number>?
+
 
     Column {
         Row {
@@ -204,21 +202,10 @@ fun Dashboard(
                                             selectedItem!!.name, selectedItem!!.uom
                                         )
                                     )
-                                    listMeasures = roomScreenViewModel.getMeasures()
-                                    listMeasures?.forEach {
-                                        //Text(it.value.toString())
-                                        measureValue.add(it.value)
-                                    }
-                                    roomUiState.graphData = measureValue.map { it as Number }
-
-                                    Log.v("nexlist : ", roomUiState.graphData.toString())
                                 }
                             }
                         )
                     }
-                    ActivateGraph(dataList, roomUiState)
-                    //finalDataList = dataList
-                    //finalRoomUiState = roomUiState
                 }
             }
         }
@@ -260,65 +247,23 @@ fun Dashboard(
                 )
             }
         }
-
-        @Composable
-        fun GetTheGraph(finalDataList: Collection<Number>?, finalRoomUiState: RoomUiState){
-            CallTheGraph(finalDataList, finalRoomUiState)
+        Column {
+            Text("before")
+            LineSeriesGraph(graphData)
+            Text("after")
         }
 
-        /*val modelProducer = remember { CartesianChartModelProducer.build() }
-        LaunchedEffect(Unit) {
-            modelProducer.tryRunTransaction {
-                lineSeries {
-                    Log.v("baguette: ", measureValue.toString())
-                    series(measureValue)
-                }
-            }
-        }
-        CartesianChartHost(
-            rememberCartesianChart(
-                rememberLineCartesianLayer(),
-                startAxis = rememberStartAxis(),
-                bottomAxis = rememberBottomAxis(),
-            ),
-            modelProducer,
-        )*/
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("CoroutineCreationDuringComposition")
-@Composable
-fun ActivateGraph(dataList: Collection<Number>?, roomUiState: RoomUiState) {
-    /*val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
-        modelProducer.tryRunTransaction {
-            lineSeries {
-                Log.v("baguette : ", roomUiState.graphData.toString())
-                dataList?.let { series(it) }
-            }
-        }
-    }
-    CartesianChartHost(
-        rememberCartesianChart(
-            rememberLineCartesianLayer(),
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
-        ),
-        modelProducer,
-    )*/
-    CallTheGraph(dataList, roomUiState)
-}
 
-@RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun CallTheGraph(dataList: Collection<Number>?, roomUiState: RoomUiState){
-    val modelProducer = remember { CartesianChartModelProducer.build() }
-    LaunchedEffect(Unit) {
+fun LineSeriesGraph(graphData: Collection<Number>?) {
+    Log.v("GraphData", graphData.toString())
+    val modelProducer = remember{ CartesianChartModelProducer.build() }
+    LaunchedEffect(graphData) {
         modelProducer.tryRunTransaction {
             lineSeries {
-                Log.v("baguette : ", roomUiState.graphData.toString())
-                dataList?.let { series(it) }
+                graphData?.let { series(it) }
             }
         }
     }
@@ -331,6 +276,7 @@ fun CallTheGraph(dataList: Collection<Number>?, roomUiState: RoomUiState){
         modelProducer,
     )
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
