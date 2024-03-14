@@ -186,7 +186,8 @@ fun Navigation(
                 navController = navController,
                 retryAction = {},
                 predictionScreenViewModel = viewModel(factory = PredictionScreenViewModel.Factory),
-                modifier = Modifier
+                modifier = Modifier,
+                scrollState = scrollState
             )
         }
     }

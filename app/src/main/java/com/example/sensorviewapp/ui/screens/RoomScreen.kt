@@ -57,6 +57,7 @@ import com.example.sensorviewapp.model.GetLastValue
 import com.example.sensorviewapp.model.Measure
 import com.example.sensorviewapp.model.Room
 import com.example.sensorviewapp.model.Sensor
+import com.example.sensorviewapp.model.searchDisplayName
 import com.example.sensorviewapp.ui.screens.viewmodel.DataVisualizationUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenUiState
 import com.example.sensorviewapp.ui.screens.viewmodel.RoomScreenViewModel
@@ -201,13 +202,15 @@ fun Dashboard(
                 }
             ) {
                 selectedItem?.let {
-                    TextField(
-                        value = it.name,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        modifier = Modifier.menuAnchor()
-                    )
+                    searchDisplayName(it.name)?.let { it1 ->
+                        TextField(
+                            value = it1.uom,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                            modifier = Modifier.menuAnchor()
+                        )
+                    }
                 }
 
                 ExposedDropdownMenu(
@@ -216,7 +219,7 @@ fun Dashboard(
                 ) {
                     roomUiState.sensorList?.forEach { item ->
                         DropdownMenuItem(
-                            text = { Text(text = item.uom) },
+                            text = { searchDisplayName(item.name)?.let { Text(text = it.uom) } },
                             onClick = {
                                 selectedItem = item
                                 expanded = false

@@ -1,0 +1,76 @@
+package com.example.sensorviewapp.model
+
+enum class AllSensors(val value: String, val uom: String) {
+
+    CO2_AIR_TEMP_D251  ("d251_1_co2_air_temperature", "D251_TEMP_1"),
+    CO2_LVL_D251  ("d251_1_co2_carbon_dioxide_co2_level", "D251_LVL_1"),
+    CO2_DEW_D251  ("d251_1_co2_dew_point", "D251_DEW_1"),
+    CO2_HIGHLY_POLLUTED_D251  ("d251_1_co2_highly_polluted", "D251_HIGHLY_POLLUTED_1"),
+    CO2_HUMIDITY_D251  ("d251_1_co2_humidity", "D251_HUMIDITY_1"),
+    CO2_MODERATELY_POLLUTED_D251  ("d251_1_co2_moderately_polluted", "D251_MODERATELY_POLLUTED_1"),
+    CO2_SLIGHTLY_POLLUTED_D251  ("d251_1_co2_slightly_polluted", "D251_SLIGHTLY_POLLUTED_1"),
+    CO2_VOLATILE_ORGANIC_COMPOUND_LVL_D251  ("d251_1_co2_volatile_organic_compound_level", "D251_VOLATILE_ORGANIC_COMPOUND_LVL_1"),
+    MULTI_AIR_TEMP_D251  ("d251_1_multisensor_air_temperature", "D251_TEMP_2"),
+    MULTI_HUMIDITY_D251  ("d251_1_multisensor_humidity", "D251_HUMIDITY_2"),
+    MULTI_ILLUMINANCE_D251  ("d251_1_multisensor_illuminance", "D251_ILLUMINANCE_1"),
+    MULTI_MOTION_DETECTION_D251  ("d251_1_multisensor_motion_detection", "D251_MOTION_DETECTION_1"),
+    MULTI_UV_INDEX_D251  ("d251_1_multisensor_ultraviolet", "D251_ULTRAVIOLET_1"),
+
+    //251
+    CO2_AIR_TEMP_1_351  ("d351_1_co2_air_temperature", "D351_TEMP_1"),
+    CO2_LVL_1_351  ("d351_1_co2_carbon_dioxide_co2_level", "D351_LVL_1"),
+    CO2_DEW_1_351  ("d351_1_co2_dew_point", "D351_DEW_1"),
+    CO2_HUMIDITY_1_351  ("d351_1_co2_humidity", "D351_HUMIDITY_1"),
+    CO2_MODERATELY_POLLUTED_1_351  ("d351_1_co2_moderately_polluted", "D351_MODERATELY_POLLUTED_1"),
+    CO2_SLIGHTLY_POLLUTED_1_351  ("d351_1_co2_slightly_polluted", "D351_SLIGHTLY_POLLUTED_1"),
+    CO2_VOLATILE_ORGANIC_COMPOUND_LVL_1_351  ("d351_1_co2_volatile_organic_compound_level", "D351_VOLATILE_ORGANIC_COMPOUND_LVL_1"),
+    MULTI_AIR_TEMP_1_351  ("d351_1_multisensor9_air_temperature", "D351_TEMP_2"),
+    MULTI_CO2_LVL_1_351  ("d351_1_multisensor9_carbon_dioxide_co2_level", "D351_LVL_1"),
+    MULTI_HUMIDITY_1_351  ("d351_1_multisensor9_humidity", "D351_HUMIDITY_2"),
+    MULTI_ILLUMINANCE_1_351  ("d351_1_multisensor9_illuminance", "D351_ILLUMINANCE_1"),
+    MULTI_LOUDNESS_1_351  ("d351_1_multisensor9_loudness", "D351_LOUDNESS_1"),
+    MULTI_PARTICULATE_MATTER_1_351  ("d351_1_multisensor9_particulate_matter_2_5", "D351_PARTICULATE_MATTER_1"),
+    MULTI_SMOKE_DENSITY_1_351  ("d351_1_multisensor9_smoke_density", "D351_SMOKE_DENSITY_1"),
+    MULTI_VOLATILE_ORGANIC_COMPOUND_LVL_1_351  ("d351_1_multisensor9_volatile_organic_compound_level", "D351_VOLATILE_ORGANIC_COMPOUND_LVL_2"),
+    MULTI_AIR_TEMP_1_BIS_351  ("d351_1_multisensor_air_temperature", "D351_TEMP_3"),
+    MULTI_HUMIDITY_1_BIS_351  ("d351_1_multisensor_humidity", "D351_HUMIDITY_3"),
+    MULTI_ILLUMINANCE_1_BIS_351  ("d351_1_multisensor_illuminance", "D351_ILLUMINANCE_2"),
+    MULTI_MOTION_DETECTION_1_351  ("d351_1_multisensor_motion_detection", "D351_MOTION_DETECTION_1"),
+    MULTI_ULTRAVIOLET_1_351  ("d351_1_multisensor_ultraviolet", "D351_ULTRAVIOLET_1"),
+    CO2_AIR_TEMP_2_D351  ("d351_2_co2_air_temperature", "D351_TEMP_4"),
+    CO2_LVL_2_D351  ("d351_2_co2_carbon_dioxide_co2_level", "D351_LVL_2"),
+    CO2_DEW_2_D351  ("d351_2_co2_dew_point", "D351_DEW_2"),
+    CO2_HUMIDITY_2_D351  ("d351_2_co2_humidity", "D351_HUMIDITY_4"),
+    CO2_MODERATELY_POLLUTED_2_D351  ("d351_2_co2_moderately_polluted", "D351_MODERATELY_POLLUTED_2"),
+    CO2_SLIGHTLY_POLLUTED_2_D351  ("d351_2_co2_slightly_polluted", "D351_SLIGHTLY_POLLUTED_2"),
+    CO2_VOLATILE_ORGANIC_COMPOUND_LVL_2_D351  ("d351_2_co2_volatile_organic_compound_level", "D351_VOLATILE_ORGANIC_COMPOUND_LVL_3"),
+    MULTI_AIR_TEMP_2_D351  ("d351_2_multisensor_air_temperature", "D351_TEMP_5"),
+    MULTI_HUMIDITY_2_D351  ("d351_2_multisensor_humidity", "D351_HUMIDITY_5"),
+    MULTI_ILLUMINANCE_2_D351  ("d351_2_multisensor_illuminance", "D351_ILLUMINANCE_3"),
+    MULTI_MOTION_DETECTION_2_D351  ("d351_2_multisensor_motion_detection", "D351_MOTION_DETECTION_2"),
+    MULTI_ULTRAVIOLET_2_D351  ("d351_2_multisensor_ultraviolet", "D351_ULTRAVIOLET_2"),
+    CO2_AIR_TEMP_3_D351  ("d351_3_co2_air_temperature", "D351_TEMP_6"),
+    CO2_LVL_3_D351  ("d351_3_co2_carbon_dioxide_co2_level", "D351_LVL_3"),
+    CO2_DEW_3_D351  ("d351_3_co2_dew_point", "D351_DEW_3"),
+    CO2_HUMIDITY_3_D351  ("d351_3_co2_humidity", "D351_HUMIDITY_6"),
+    CO2_VOLATILE_ORGANIC_COMPOUND_LVL_3_D351  ("d351_3_co2_volatile_organic_compound_level", "D351_VOLATILE_ORGANIC_COMPOUND_LVL_4"),
+
+    //360
+    CO2_AIR_TEMP_360  ("d360_1_co2_air_temperature", "D360_TEMP_1"),
+    CO2_LVL_360  ("d360_1_co2_carbon_dioxide_co2_level", "D360_LVL_1"),
+    CO2_DEW_360  ("d360_1_co2_dew_point", "D360_DEW_1"),
+    CO2_HIGHLY_POLLUTED_360  ("d360_1_co2_highly_polluted", "D360_HIGHLY_POLLUTED_1"),
+    CO2_HUMIDITY_360  ("d360_1_co2_humidity", "D360_HUMIDITY_1"),
+    CO2_MODERATELY_POLLUTED_360  ("d360_1_co2_moderately_polluted", "D360_MODERATELY_POLLUTED_1"),
+    CO2_SLIGHTLY_POLLUTED_360  ("d360_1_co2_slightly_polluted", "D360_SLIGHTLY_POLLUTED_1"),
+    CO2_VOLATILE_ORGANIC_COMPOUND_LVL_360  ("d360_1_co2_volatile_organic_compound_level", "D360_VOLATILE_ORGANIC_COMPOUND_LVL_1"),
+    MULTI_AIR_TEMP_360  ("d360_1_multisensor_air_temperature_2", "D360_TEMP_2"),
+    MULTI_HUMIDITY_360  ("d360_1_multisensor_humidity_2", "D360_HUMIDITY_2"),
+    MULTI_ILLUMINANCE_360  ("d360_1_multisensor_illuminance_2", "D360_ILLUMINANCE_1"),
+    MULTI_MOTION_DETECTION_360  ("d360_1_multisensor_motion_detection_2", "D360_MOTION_DETECTION_1"),
+    MULTI_ULTRAVIOLET_360  ("d360_1_multisensor_ultraviolet_2", "D360_ULTRAVIOLET_1");
+
+}
+fun searchDisplayName(value: String): AllSensors? {
+    return AllSensors.entries.find { it.value == value }
+}
