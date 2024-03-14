@@ -6,4 +6,6 @@
     <string name="actuator">Actuator</string>
     <string name="prediction">Prediction</string>
     <string name="room">Room</string>
+    <string name="loading">Loading</string>
+    <string name="error">Error loading</string>
 </resources>

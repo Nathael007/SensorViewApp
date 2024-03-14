@@ -168,7 +168,7 @@ fun Dashboard(
                 .padding(bottom = 20.dp)
         ) {
             Text("Presence:", fontWeight = FontWeight.Bold)
-            Text("%,.1f".format(roomUiState.comfortIndicator?.presenceProba?.times(100) ?: 0.0) + " %")
+            Text("%,.1f".format(roomUiState.comfortIndicator?.presenceProba?.times(100) ?: 0.0) + " % Chance")
             Text("Comfort:", fontWeight = FontWeight.Bold)
             Row {
                 indicators?.forEach {
@@ -295,7 +295,7 @@ fun Dashboard(
             Text(lastValue?.value.toString() + " " + lastValue?.uom + " " + lastValue?.date)
         }
         Column {
-            Text("Informations:", fontWeight = FontWeight.Bold)
+            Text("Explanation of icons:", fontWeight = FontWeight.Bold)
             Status.entries.forEach { status ->
                 Row {
                     Text(

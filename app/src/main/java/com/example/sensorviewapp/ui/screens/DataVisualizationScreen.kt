@@ -58,6 +58,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.sensorviewapp.R
 import com.example.sensorviewapp.model.Comfort
 
 enum class ComfortIndicator(val emoji: String) {
@@ -102,7 +103,12 @@ fun LoadingScreen(
         painter = painterResource(R.drawable.loading_img),
         contentDescription = stringResource(R.string.loading)
     )*/
-    Text("Load")
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = stringResource(R.string.loading)
+    )
+    //Text("Load")
 }
 
 @Composable
@@ -122,6 +128,11 @@ fun ErrorScreen(
         Button(onClick = retryAction) {
             Text(stringResource(R.string.retry))
         }*/
+        Image(
+            modifier = modifier.size(200.dp),
+            painter = painterResource(R.drawable.ic_connection_error),
+            contentDescription = stringResource(R.string.error)
+        )
         Text("Error")
     }
 }
