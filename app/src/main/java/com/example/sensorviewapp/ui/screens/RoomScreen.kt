@@ -153,6 +153,7 @@ fun Dashboard(
             roomUiState.listMeasures = newMeasures
             graphData = newMeasures.map { it.value }
         }
+        Log.v("triggers data update : ", graphData.toString())
     }
 
     Column(
@@ -286,7 +287,7 @@ fun Dashboard(
                 .padding(bottom = 10.dp)
         ) {
             Text("Last value measured:", fontWeight = FontWeight.Bold)
-            Text(lastValue?.value.toString() + " " + lastValue?.uom)
+            Text(lastValue?.value.toString() + " " + lastValue?.uom + " " + lastValue?.date)
         }
         Column {
             Text("Informations:", fontWeight = FontWeight.Bold)
@@ -305,21 +306,30 @@ fun Dashboard(
 @Composable
 fun LineSeriesGraph(graphData: Collection<Number>?) {
     val modelProducer = remember{ CartesianChartModelProducer.build() }
-    LaunchedEffect(graphData) {
-        modelProducer.tryRunTransaction {
-            lineSeries {
-                graphData?.let { series(it) }
+    if (graphData != null) {
+        if(graphData.isEmpty()){
+            Text("No data found for the selected dates and sensor !")
+        }
+        else {
+            LaunchedEffect(graphData) {
+                modelProducer.tryRunTransaction {
+                    lineSeries {
+                        graphData?.let { series(it) }
+                    }
+                    Log.v("graph values : ", graphData.toString())
+                }
             }
+            CartesianChartHost(
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
+                ),
+                modelProducer,
+            )
         }
     }
-    CartesianChartHost(
-        rememberCartesianChart(
-            rememberLineCartesianLayer(),
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
-        ),
-        modelProducer,
-    )
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
